@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { Suite } from '../shared/schema';
-import { Modal } from './components';
-import { api } from './api';
+import type { Suite } from '../../../shared/schema';
+import { Modal } from '../../components/ui';
+import { api } from '../../lib/api';
 type Question = {
   id: string;
   prompt: string;

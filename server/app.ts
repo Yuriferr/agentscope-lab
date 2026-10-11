@@ -48,7 +48,7 @@ export function createApp(options: {
     next();
   });
   app.use(express.json({ limit: '2mb' }));
-  app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.1.0' }));
+  app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.2.0' }));
   app.get('/api/agents', (_req, res) =>
     res.json(
       store

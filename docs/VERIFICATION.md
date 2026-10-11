@@ -1,5 +1,7 @@
 # Relatório de verificação · 11/10/2026
 
+Revisão **1.2.0**: identidade visual em azul-marinho, paleta centralizada, organização por funcionalidade e telas avançadas separadas. As capturas foram regeneradas com esta interface.
+
 ## Fluxo verificado
 
 Usuário escolhe agente e suíte na interface → API valida a execução → executor chama o provedor → critérios avaliam a resposta → SQLite salva o resultado → interface apresenta histórico, detalhes, comparação e exportação.

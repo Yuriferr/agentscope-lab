@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { ArrowRight, Plus, Upload } from 'lucide-react';
-import type { Agent, Run, Suite } from '../shared/schema';
-import { api } from './api';
-import { Modal } from './components';
+import type { Agent, Run, Suite } from '../../../shared/schema';
+import { api } from '../../lib/api';
+import { Modal } from '../../components/ui';
 
 export function RunForm({
   agents,

@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { X, ArrowUpRight, FlaskConical, Check, Minus, LoaderCircle } from 'lucide-react';
-import type { Run, RunSummary } from '../shared/schema';
-import { date, ms, pct } from './api';
+import type { Run, RunSummary } from '../../shared/schema';
+import { date, ms, pct } from '../lib/api';
 export function Modal({
   title,
   children,

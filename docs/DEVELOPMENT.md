@@ -13,6 +13,21 @@ npm run test:e2e
 
 No Windows com Chrome instalado: `$env:PLAYWRIGHT_CHANNEL='chrome'` antes do teste de navegador.
 
+## Configuração opcional
+
+O servidor lê `.env` na raiz ao iniciar. Copie `.env.example` e altere apenas o que precisar; o fluxo demonstrativo funciona sem esse arquivo.
+
+| Variável | Padrão | Uso |
+| --- | --- | --- |
+| `HOST` | `127.0.0.1` | Endereço de escuta do servidor local. |
+| `PORT` | `4310` | Porta da API e da interface compilada. |
+| `DATA_DIR` | `./data` | Pasta do banco `agentscope.sqlite`. |
+| `AGENT_ALLOWED_ORIGINS` | Origens dos presets | Origens extras autorizadas, separadas por vírgulas, sem caminhos nem curingas. |
+
+Os padrões de origem permanecem autorizados quando você acrescenta outros. O arquivo `.env` não é versionado. As chaves digitadas no painel não são escritas nele.
+
+Para atualizar uma cópia clonada, encerre o servidor, atualize sua branch, execute `npm ci` e `npm run build`, e inicie novamente. Preserve `data/` para manter o histórico. Mudanças locais no código precisam ser conciliadas antes da atualização.
+
 ## CLI e quality gate
 
 ```bash
@@ -47,7 +62,9 @@ flowchart LR
  API --> UI
 ```
 
-`src/SimpleApp.tsx` contém o fluxo inicial; `src/ConnectForm.tsx` guia as conexões; `src/SimpleReport.tsx` traduz os critérios em explicações. A interface anterior está em `src/AdvancedApp.tsx`, carregada sob demanda pelo link `#advanced`.
+`src/features/lab/SimpleApp.tsx` contém o fluxo inicial; `src/features/connections/ConnectForm.tsx` guia as conexões; `src/features/results/SimpleReport.tsx` traduz os critérios em explicações. A interface anterior está em `src/features/advanced/AdvancedApp.tsx`, carregada sob demanda pelo link `#advanced`.
+
+As telas avançadas foram separadas em `src/features/advanced/views/`. Os elementos reutilizáveis ficam em `src/components/ui.tsx`; a comunicação HTTP do navegador fica em `src/lib/api.ts`. Consulte [design e organização](DESIGN.md) antes de adicionar um componente ou alterar a paleta.
 
 `server/connections.ts` descobre modelos e testa acesso. `server/providers.ts` transforma os protocolos externos em uma resposta interna comum. `responseMode: plain` avalia texto normal; o modo estruturado continua disponível para a suíte bancária/integrações antigas.
 

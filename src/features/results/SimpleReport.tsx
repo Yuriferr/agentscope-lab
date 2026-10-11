@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Check, ChevronDown, Download, LoaderCircle, X } from 'lucide-react';
-import type { Check as Criterion, Result, Run } from '../shared/schema';
-import { ms } from './api';
+import type { Check as Criterion, Result, Run } from '../../../shared/schema';
+import { ms } from '../../lib/api';
 function expected(check: Criterion) {
   if (check.type === 'not_contains')
     return `Não incluir “${String(check.expected).replace('Ausência de: ', '')}”`;

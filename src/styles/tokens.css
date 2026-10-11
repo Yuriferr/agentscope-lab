@@ -1,0 +1,18 @@
+/* Shared brand palette. Use semantic status colors for feedback. */
+:root {
+  --color-ink: #0b1f3a;
+  --color-navy: #17365e;
+  --color-mid: #2d507f;
+  --color-muted: #526785;
+  --color-edge: #9bb5d8;
+  --color-line: #d2dff0;
+  --color-soft: #eaf0f9;
+  --color-canvas: #f4f7fc;
+  --color-white: #ffffff;
+  --color-accent: #4b91f1;
+  --color-success: #23634d;
+  --color-success-bg: #eaf5ef;
+  --color-warning: #86571a;
+  --color-warning-bg: #fff3df;
+  --shadow-card: 0 12px 36px rgb(11 31 58 / 5%);
+}

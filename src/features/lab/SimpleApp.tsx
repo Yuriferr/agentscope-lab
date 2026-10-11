@@ -13,14 +13,14 @@ import {
   Plus,
   Sparkles,
 } from 'lucide-react';
-import type { Agent, Run, RunSummary, Suite } from '../shared/schema';
-import { presets, type PresetId } from '../shared/presets';
-import { api, date } from './api';
-import { Modal } from './components';
-import ConnectForm from './ConnectForm';
-import SimpleSuiteForm from './SimpleSuiteForm';
-import SimpleReport from './SimpleReport';
-import './simple.css';
+import type { Agent, Run, RunSummary, Suite } from '../../../shared/schema';
+import { presets, type PresetId } from '../../../shared/presets';
+import { api, date } from '../../lib/api';
+import { Modal } from '../../components/ui';
+import ConnectForm from '../connections/ConnectForm';
+import SimpleSuiteForm from '../suites/SimpleSuiteForm';
+import SimpleReport from '../results/SimpleReport';
+import '../../styles/lab.css';
 type ConnectedAgent = Agent & { needsKey?: boolean };
 export default function SimpleApp() {
   const [tab, setTab] = useState<'start' | 'agents' | 'history' | 'help'>('start');

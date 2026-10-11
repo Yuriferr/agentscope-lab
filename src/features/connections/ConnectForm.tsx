@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import { ArrowRight, CheckCircle2, ExternalLink, LoaderCircle, RefreshCw } from 'lucide-react';
-import { presets, type PresetId } from '../shared/presets';
-import type { Agent } from '../shared/schema';
-import { Modal } from './components';
-import { api } from './api';
+import { presets, type PresetId } from '../../../shared/presets';
+import type { Agent } from '../../../shared/schema';
+import { Modal } from '../../components/ui';
+import { api } from '../../lib/api';
 export default function ConnectForm({
   presetId,
   onClose,

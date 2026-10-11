@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import SimpleApp from './SimpleApp';
-const AdvancedApp = lazy(() => import('./AdvancedApp'));
+import SimpleApp from '../features/lab/SimpleApp';
+const AdvancedApp = lazy(() => import('../features/advanced/AdvancedApp'));
 export default function App() {
   const [advanced, setAdvanced] = useState(location.hash === '#advanced');
   useEffect(() => {
