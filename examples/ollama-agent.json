@@ -1,0 +1,8 @@
+{
+  "name": "Assistente bancário local",
+  "version": "prompt-v1",
+  "provider": "ollama",
+  "endpoint": "http://localhost:11434/api/chat",
+  "model": "llama3.2",
+  "timeoutMs": 120000
+}

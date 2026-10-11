@@ -1,0 +1,7 @@
+{
+  "name": "Meu agente HTTP",
+  "version": "v1.0",
+  "provider": "http",
+  "endpoint": "http://localhost:8000/evaluate",
+  "timeoutMs": 30000
+}

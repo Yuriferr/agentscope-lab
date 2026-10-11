@@ -1,0 +1,30 @@
+name: Quality & agent evaluation
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Deterministic candidate quality gate (not an LLM benchmark)
+        run: npm run eval -- --agent demo-candidate --min-pass-rate 100 --output demo-evaluation.json
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-evidence
+          path: |
+            demo-evaluation.json
+            docs/images/*.png
+            test-results/
