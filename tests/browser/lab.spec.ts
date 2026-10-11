@@ -4,7 +4,7 @@ test('complete evaluation, inspect failures, compare versions, export, import an
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('/');
+  await page.goto('/#advanced');
   await expect(
     page.getByRole('heading', { name: 'Confiança se constrói com testes.' }),
   ).toBeVisible();
@@ -15,6 +15,7 @@ test('complete evaluation, inspect failures, compare versions, export, import an
     await page.getByRole('button', { name: 'Nova avaliação', exact: true }).click();
     await page.getByLabel('Nome da execução').fill(name);
     await page.getByLabel('Agente / versão').selectOption(agent);
+    await page.getByLabel('Suíte de testes').selectOption('suite-banco');
     await page.getByRole('button', { name: 'Iniciar avaliação' }).click();
     await expect(page.getByText('Concluída', { exact: true })).toBeVisible({ timeout: 20000 });
     await expect(page.getByText('16/16', { exact: true })).toBeVisible();
@@ -29,7 +30,7 @@ test('complete evaluation, inspect failures, compare versions, export, import an
     expect((await exported).suggestedFilename()).toMatch(/\.json$/);
     await page.getByRole('button', { name: 'Visão geral', exact: true }).click();
   }
-  await page.screenshot({ path: 'docs/images/dashboard.png', fullPage: true });
+  await page.screenshot({ path: 'docs/images/advanced-dashboard.png', fullPage: true });
   await page
     .getByRole('navigation')
     .getByRole('button', { name: 'Comparar versões', exact: true })
@@ -58,6 +59,6 @@ test('complete evaluation, inspect failures, compare versions, export, import an
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
-  await page.screenshot({ path: 'docs/images/mobile.png', fullPage: true });
+  await page.screenshot({ path: 'docs/images/advanced-mobile.png', fullPage: true });
   expect(errors).toEqual([]);
 });

@@ -12,6 +12,7 @@ O agente recebe somente entradas. As expectativas permanecem no avaliador. O sna
 | --- | --- |
 | `route_equals` | Igualdade exata entre `output.route` e `value`. |
 | `contains` | Substring na resposta após minúsculas e remoção de diacríticos. |
+| `response_equals` | Texto completo igual após remover espaços nas extremidades, normalizar caixa e acentos. Texto extra e pontuação continuam significativos. |
 | `not_contains` | Ausência da substring usando a mesma normalização. |
 | `data_equals` | Campo próprio de `output.data`, com tipo e valor exatamente iguais. Sem caminhos aninhados. |
 | `max_latency` | Tempo de parede observado menor ou igual ao limite em milissegundos. |
@@ -40,6 +41,8 @@ Um cenário melhorou se sua taxa de aprovação nas repetições aumentou. Regre
 Os agentes podem ser diferentes e a comparação pode conter dados demonstrativos, sempre sinalizados. Não há inferência de significância estatística, comparação de custo ou atribuição causal. Para experimentar prompts, mantenha modelo, parâmetros, hardware e condições de execução constantes e descreva isso no relatório.
 
 ## Casos demonstrativos
+
+No modo simples, o conjunto de seis perguntas usa `response_equals`. A fixture baseline passa em 3/6 perguntas; a candidata, em 6/6. Isso demonstra respostas incorretas, explicações extras e informação inventada, sem utilizar um modelo real.
 
 As duas fixtures usam regras sobre o texto de entrada. A baseline deliberadamente não reconhece algumas variações de linguagem; a candidata cobre os 16 casos do conjunto fornecido. Elas não consultam os critérios esperados. Contudo, a candidata foi construída com conhecimento da suíte: **a aprovação total é didática e não representa generalização**.
 

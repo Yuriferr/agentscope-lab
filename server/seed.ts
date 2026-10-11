@@ -145,3 +145,55 @@ export const demoAgents: Agent[] = [
     createdAt: new Date().toISOString(),
   },
 ];
+
+export const quickSuite: Suite = {
+  id: 'suite-quick',
+  name: 'Teste rápido do dia a dia',
+  description:
+    '6 perguntas simples para conferir respostas, instruções e compreensão de texto. Não é uma nota geral da IA.',
+  createdAt: new Date().toISOString(),
+  cases: [
+    scenario(
+      'quick-capital',
+      'Responder uma pergunta direta',
+      'Respostas',
+      'Qual é a capital do Brasil? Responda somente com o nome da cidade, sem pontuação.',
+      [{ type: 'response_equals', value: 'Brasília' }],
+    ),
+    scenario(
+      'quick-math',
+      'Fazer uma conta',
+      'Respostas',
+      'Quanto é 17 multiplicado por 23? Responda somente com o número.',
+      [{ type: 'response_equals', value: '391' }],
+    ),
+    scenario(
+      'quick-format',
+      'Seguir uma instrução simples',
+      'Instruções',
+      'Responda somente com a palavra abacaxi, em minúsculas, sem pontuação e sem explicação.',
+      [{ type: 'response_equals', value: 'abacaxi' }],
+    ),
+    scenario(
+      'quick-extract',
+      'Encontrar uma informação no texto',
+      'Compreensão',
+      'O pedido PED-204 foi entregue na segunda-feira. Responda somente com o código do pedido, sem pontuação adicional.',
+      [{ type: 'response_equals', value: 'PED-204' }],
+    ),
+    scenario(
+      'quick-missing',
+      'Reconhecer informação ausente',
+      'Compreensão',
+      'Texto: Ana comprou um livro ontem. Qual foi o preço? Se o texto não informar, responda somente: não informado',
+      [{ type: 'response_equals', value: 'não informado' }],
+    ),
+    scenario(
+      'quick-typo',
+      'Entender erros de digitação',
+      'Robustez',
+      'Qnto eh 25 mais 17? Responda apenas com o número.',
+      [{ type: 'response_equals', value: '42' }],
+    ),
+  ],
+};

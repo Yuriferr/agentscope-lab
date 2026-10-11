@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { agentInputSchema, suiteInputSchema } from '../shared/schema.ts';
 import { Store } from '../server/store.ts';
 import { Runner } from '../server/runner.ts';
-import { createProvider } from '../server/providers.ts';
+import { createProvider, standardOrigins } from '../server/providers.ts';
 if (existsSync('.env')) process.loadEnvFile('.env');
 const { values } = parseArgs({
   options: {
@@ -39,11 +39,9 @@ if (values['suite-file']) {
   suiteId = 'cli-suite';
   store.saveSuite({ ...input, id: suiteId, createdAt: new Date().toISOString() });
 }
-const origins = process.env.AGENT_ALLOWED_ORIGINS?.split(',').map((s) => s.trim()) ?? [
-  'http://127.0.0.1:8000',
-  'http://localhost:8000',
-  'http://localhost:11434',
-  'http://127.0.0.1:11434',
+const origins = [
+  ...standardOrigins,
+  ...(process.env.AGENT_ALLOWED_ORIGINS?.split(',').map((s) => s.trim()) ?? []),
 ];
 const runner = new Runner(store, createProvider(origins));
 try {

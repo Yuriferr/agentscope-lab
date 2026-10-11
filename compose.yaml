@@ -6,7 +6,7 @@ services:
     volumes:
       - lab-data:/app/data
     environment:
-      AGENT_ALLOWED_ORIGINS: http://host.docker.internal:8000,http://host.docker.internal:11434
+      AGENT_ALLOWED_ORIGINS: http://host.docker.internal:8000,http://host.docker.internal:11434,http://host.docker.internal:1234
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 volumes:

@@ -2,7 +2,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import type { Agent, Run, RunSummary, Suite } from '../shared/schema.ts';
-import { bankingSuite, demoAgents } from './seed.ts';
+import { bankingSuite, demoAgents, quickSuite } from './seed.ts';
 export class Store {
   private db: DatabaseSync;
   constructor(path: string) {
@@ -13,6 +13,7 @@ export class Store {
     );
     for (const agent of demoAgents) if (!this.agent(agent.id)) this.saveAgent(agent);
     if (!this.suite(bankingSuite.id)) this.saveSuite(bankingSuite);
+    if (!this.suite(quickSuite.id)) this.saveSuite(quickSuite);
     for (const run of this.all<Run>('runs'))
       if (run.status === 'running')
         this.saveRun({ ...run, status: 'interrupted', finishedAt: new Date().toISOString() });

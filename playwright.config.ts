@@ -15,7 +15,11 @@ export default defineConfig({
     command: 'npm run start',
     url: 'http://127.0.0.1:4311/api/health',
     reuseExistingServer: false,
-    env: { PORT: '4311', DATA_DIR: './test-results/e2e-data' },
+    env: {
+      PORT: '4311',
+      DATA_DIR: './test-results/e2e-data',
+      AGENT_ALLOWED_ORIGINS: 'http://127.0.0.1:4312',
+    },
     timeout: 30000,
   },
 });

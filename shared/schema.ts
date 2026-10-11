@@ -1,10 +1,19 @@
 import { z } from 'zod';
 
-export const categories = ['Roteamento', 'Robustez', 'Segurança', 'Extração'] as const;
+export const categories = [
+  'Roteamento',
+  'Robustez',
+  'Segurança',
+  'Extração',
+  'Respostas',
+  'Instruções',
+  'Compreensão',
+] as const;
 const short = z.string().trim().min(1).max(160);
 export const assertionSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('route_equals'), value: short }),
   z.object({ type: z.literal('contains'), value: short }),
+  z.object({ type: z.literal('response_equals'), value: short }),
   z.object({ type: z.literal('not_contains'), value: short }),
   z.object({
     type: z.literal('data_equals'),
@@ -33,7 +42,9 @@ export const agentInputSchema = z
   .object({
     name: short,
     version: short,
-    provider: z.enum(['demo', 'http', 'ollama']),
+    provider: z.enum(['demo', 'http', 'ollama', 'openai-compatible']),
+    responseMode: z.enum(['plain', 'structured']).optional(),
+    sessionKeyRequired: z.boolean().optional(),
     demoVariant: z.enum(['baseline', 'candidate']).optional(),
     endpoint: z.string().url().max(2048).optional(),
     model: z.string().trim().min(1).max(100).optional(),
@@ -47,7 +58,7 @@ export const agentInputSchema = z
   .superRefine((a, ctx) => {
     if (a.provider !== 'demo' && !a.endpoint)
       ctx.addIssue({ code: 'custom', message: 'Informe o endpoint.', path: ['endpoint'] });
-    if (a.provider === 'ollama' && !a.model)
+    if (['ollama', 'openai-compatible'].includes(a.provider) && !a.model)
       ctx.addIssue({ code: 'custom', message: 'Informe o modelo.', path: ['model'] });
     if (a.provider === 'demo' && !a.demoVariant)
       ctx.addIssue({

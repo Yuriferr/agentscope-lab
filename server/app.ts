@@ -3,7 +3,8 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { agentInputSchema, runInputSchema, suiteInputSchema } from '../shared/schema.ts';
 import { compare, csv } from './evaluation.ts';
-import { createProvider, validateEndpoint, type Provider } from './providers.ts';
+import { createProvider, validateEndpoint, standardOrigins, type Provider } from './providers.ts';
+import { keySchema, listModels, testConnection } from './connections.ts';
 import { Runner } from './runner.ts';
 import { Store } from './store.ts';
 export function createApp(options: {
@@ -13,13 +14,12 @@ export function createApp(options: {
   staticDir?: string;
 }) {
   const store = new Store(options.dbPath);
-  const allowedOrigins = options.allowedOrigins ?? [
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-    'http://localhost:11434',
-    'http://127.0.0.1:11434',
-  ];
-  const runner = new Runner(store, options.provider ?? createProvider(allowedOrigins));
+  const allowedOrigins = [...new Set([...standardOrigins, ...(options.allowedOrigins ?? [])])];
+  const sessionKeys = new Map<string, string>();
+  const runner = new Runner(
+    store,
+    options.provider ?? createProvider(allowedOrigins, (id) => sessionKeys.get(id)),
+  );
   const app = express();
   app.disable('x-powered-by');
   app.use((_req, res, next) => {
@@ -48,14 +48,46 @@ export function createApp(options: {
     next();
   });
   app.use(express.json({ limit: '2mb' }));
-  app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
-  app.get('/api/agents', (_req, res) => res.json(store.agents()));
+  app.get('/api/health', (_req, res) => res.json({ status: 'ok', version: '1.1.0' }));
+  app.get('/api/agents', (_req, res) =>
+    res.json(
+      store
+        .agents()
+        .map((a) => ({ ...a, needsKey: Boolean(a.sessionKeyRequired && !sessionKeys.has(a.id)) })),
+    ),
+  );
+  app.post('/api/connections/models', async (req, res) =>
+    res.json(await listModels(req.body, allowedOrigins)),
+  );
+  app.post('/api/connections/test', async (req, res) =>
+    res.json(await testConnection(req.body, allowedOrigins)),
+  );
   app.post('/api/agents', (req, res) => {
     const input = agentInputSchema.parse(req.body);
+    const apiKey = keySchema.parse(req.body.apiKey);
     if (input.endpoint) validateEndpoint(input.endpoint, allowedOrigins);
-    const agent = { ...input, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+    const agent = {
+      ...input,
+      sessionKeyRequired: Boolean(apiKey) || input.sessionKeyRequired,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+    if (apiKey) sessionKeys.set(agent.id, apiKey);
     store.saveAgent(agent);
     res.status(201).json(agent);
+  });
+  app.post('/api/agents/:id/key', async (req, res) => {
+    const agent = store.agent(req.params.id);
+    if (!agent) {
+      res.status(404).json({ error: 'IA não encontrada.' });
+      return;
+    }
+    const apiKey = keySchema.parse(req.body.apiKey);
+    if (!apiKey) throw new Error('Informe a chave de API.');
+    await testConnection({ ...agent, apiKey }, allowedOrigins);
+    sessionKeys.set(agent.id, apiKey);
+    store.saveAgent({ ...agent, sessionKeyRequired: true });
+    res.json({ ok: true });
   });
   app.get('/api/suites', (_req, res) => res.json(store.suites()));
   app.post('/api/suites', (req, res) => {
@@ -67,6 +99,9 @@ export function createApp(options: {
   app.get('/api/runs', (_req, res) => res.json(store.runs()));
   app.post('/api/runs', (req, res) => {
     const input = runInputSchema.parse(req.body);
+    const agent = store.agent(input.agentId);
+    if (agent?.sessionKeyRequired && !sessionKeys.has(agent.id))
+      throw new Error('Informe sua chave novamente em Minhas IAs antes de iniciar.');
     res.status(202).json(runner.start(input.agentId, input.suiteId, input.name, input.repetitions));
   });
   app.get('/api/runs/:id', (req, res) => {
@@ -117,22 +152,18 @@ export function createApp(options: {
   }
   const errors: ErrorRequestHandler = (error, _req, res, _next) => {
     if (error.name === 'ZodError') {
-      res
-        .status(400)
-        .json({
-          error: error.issues
-            .map((i: { message: string; path: string[] }) => `${i.path.join('.')}: ${i.message}`)
-            .join('; '),
-        });
+      res.status(400).json({
+        error: error.issues
+          .map((i: { message: string; path: string[] }) => `${i.path.join('.')}: ${i.message}`)
+          .join('; '),
+      });
       return;
     }
     const status = error.status === 413 ? 413 : 400;
-    res
-      .status(status)
-      .json({
-        error:
-          error instanceof SyntaxError ? 'JSON inválido.' : error.message || 'Requisição inválida.',
-      });
+    res.status(status).json({
+      error:
+        error instanceof SyntaxError ? 'JSON inválido.' : error.message || 'Requisição inválida.',
+    });
   };
   app.use(errors);
   return { app, store, runner };

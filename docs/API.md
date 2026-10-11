@@ -7,6 +7,9 @@ Base padrão: `http://127.0.0.1:4310/api`. Respostas JSON, salvo exportação CS
 | GET | `/health` | Status e versão. |
 | GET | `/agents` | Configurações de agentes. |
 | POST | `/agents` | Nova configuração imutável. |
+| POST | `/connections/models` | Descobre modelos de Ollama ou API compatível com Chat Completions. |
+| POST | `/connections/test` | Testa a configuração com uma mensagem curta, sem salvar. |
+| POST | `/agents/:id/key` | Testa e restaura uma chave de sessão após reiniciar. |
 | GET | `/suites` | Suítes e cenários. |
 | POST | `/suites` | Valida e cria suíte. |
 | GET | `/runs` | Resumos de execuções, mais recentes primeiro. |
@@ -47,7 +50,11 @@ Remova `tokenEnv` para serviços sem autenticação. A criação valida a origem
 
 ## Ollama
 
-Use `provider: "ollama"`, `model` e o endpoint completo `/api/chat`. `systemPrompt` é opcional; o padrão está em `server/providers.ts`. `format: "json"`, `stream: false` e `temperature: 0` são enviados pelo conector. `tokenEnv` pode ser usado quando existir um proxy autenticado.
+No modo simples, use `responseMode: "plain"` para receber texto normal. O conector `openai-compatible` aceita a resposta Chat Completions em `choices[0].message.content`; usa `model`, `messages` e `stream: false`, sem exigir um JSON bancário do modelo.
+
+Os endpoints de conexão aceitam `apiKey` temporária. `/agents` retira esse campo antes de persistir e marca apenas `sessionKeyRequired`; `/agents` GET informa `needsKey` quando o servidor precisa receber a chave novamente. `/connections/models` recebe `provider`, `endpoint` e `apiKey` opcional. `/connections/test` recebe uma configuração de agente completa e a chave opcional. A restauração recebe `{ "apiKey": "..." }`.
+
+Use `provider: "ollama"`, `model` e o endpoint completo `/api/chat`. `systemPrompt` é opcional; os padrões estão em `server/providers.ts`. `stream: false` e `temperature: 0` são enviados pelo conector; `format: "json"` só é usado no modo estruturado. `tokenEnv` pode ser usado quando existir um proxy autenticado.
 
 ## Operação
 

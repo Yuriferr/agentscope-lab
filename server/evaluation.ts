@@ -17,6 +17,14 @@ export const normalize = (value: string) =>
 export function evaluate(scenario: Scenario, output: AgentOutput, latencyMs: number): Check[] {
   return scenario.assertions.map((a) => {
     switch (a.type) {
+      case 'response_equals':
+        return {
+          type: a.type,
+          label: 'Resposta esperada',
+          passed: normalize(output.response.trim()) === normalize(a.value.trim()),
+          expected: a.value,
+          actual: output.response,
+        };
       case 'route_equals':
         return {
           type: a.type,
